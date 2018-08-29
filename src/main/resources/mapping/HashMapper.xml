@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rosetta.image.mapper.HashMapper" >
+  <resultMap id="BaseResultMap" type="com.rosetta.image.entity.Hash" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="idf" property="idf" jdbcType="DOUBLE" />
+    <result column="pyramid_key" property="pyramidKey" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="BIGINT" />
+    <result column="update_time" property="updateTime" jdbcType="BIGINT" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.rosetta.image.entity.Hash" extends="BaseResultMap" >
+    <result column="images" property="images" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, idf, pyramid_key, create_time, update_time
+  </sql>
+  <sql id="Blob_Column_List" >
+    images
+  </sql>
+
+  <!-- 获取所有桶信息 -->
+  <select id="selectAll" resultMap="ResultMapWithBLOBs" >
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from hash
+  </select>
+
+  <!-- 批量更新 -->
+  <update id="updateBatch">
+    update hash
+    <trim prefix="set" suffixOverrides=",">
+      <trim prefix="images =case" suffix="end,">
+        <foreach collection="list" item="i" index="index">
+          <if test="i.images!=null">
+            when id=#{i.id} then #{i.images}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix=" idf =case" suffix="end,">
+        <foreach collection="list" item="i" index="index">
+          <if test="i.idf!=null">
+            when id=#{i.id} then #{i.idf}
+          </if>
+        </foreach>
+      </trim>
+    </trim>
+    where
+    <foreach collection="list" separator="or" item="i" index="index" >
+      id=#{i.id}
+    </foreach>
+  </update>
+
+  <!-- 批量插入 -->
+  <insert id="insertBatch">
+    insert into hash (idf, pyramid_key,
+    images,create_time,update_time)
+    values
+    <foreach collection="list" item="hash" separator=",">
+      ( #{hash.idf}, #{hash.pyramidKey},#{hash.images},#{hash.createTime},#{hash.updateTime})
+    </foreach>
+  </insert>
+
+  <!-- 批量获取 -->
+  <select id="selectBatch" resultMap="ResultMapWithBLOBs">
+    SELECT <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    FROM hash h
+    WHERE h.pyramid_key IN
+    <foreach collection="list" item="pyramidKey" open="(" close=")" separator=",">
+      #{pyramidKey}
+    </foreach>
+  </select>
+
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from hash
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from hash
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.rosetta.image.entity.Hash" >
+    insert into hash (id, idf, pyramid_key, 
+      create_time, update_time, images
+      )
+    values (#{id,jdbcType=INTEGER}, #{idf,jdbcType=DOUBLE}, #{pyramidKey,jdbcType=INTEGER}, 
+      #{createTime,jdbcType=BIGINT}, #{updateTime,jdbcType=BIGINT}, #{images,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.rosetta.image.entity.Hash" >
+    insert into hash
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="idf != null" >
+        idf,
+      </if>
+      <if test="pyramidKey != null" >
+        pyramid_key,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="images != null" >
+        images,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="idf != null" >
+        #{idf,jdbcType=DOUBLE},
+      </if>
+      <if test="pyramidKey != null" >
+        #{pyramidKey,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=BIGINT},
+      </if>
+      <if test="images != null" >
+        #{images,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.rosetta.image.entity.Hash" >
+    update hash
+    <set >
+      <if test="idf != null" >
+        idf = #{idf,jdbcType=DOUBLE},
+      </if>
+      <if test="pyramidKey != null" >
+        pyramid_key = #{pyramidKey,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=BIGINT},
+      </if>
+      <if test="images != null" >
+        images = #{images,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.rosetta.image.entity.Hash" >
+    update hash
+    set idf = #{idf,jdbcType=DOUBLE},
+      pyramid_key = #{pyramidKey,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=BIGINT},
+      update_time = #{updateTime,jdbcType=BIGINT},
+      images = #{images,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.rosetta.image.entity.Hash" >
+    update hash
+    set idf = #{idf,jdbcType=DOUBLE},
+      pyramid_key = #{pyramidKey,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=BIGINT},
+      update_time = #{updateTime,jdbcType=BIGINT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

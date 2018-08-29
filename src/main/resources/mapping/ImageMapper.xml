@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rosetta.image.mapper.ImageMapper" >
+  <resultMap id="BaseResultMap" type="com.rosetta.image.entity.Image" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="image_key" property="imageKey" jdbcType="VARCHAR" />
+    <result column="image_src" property="imageSrc" jdbcType="VARCHAR" />
+    <result column="norm" property="norm" jdbcType="DOUBLE" />
+    <result column="dhash32_key" property="dhash32Key" jdbcType="INTEGER" />
+    <result column="dhash128_key" property="dhash128Key" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="BIGINT" />
+    <result column="create_time" property="createTime" jdbcType="BIGINT" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.rosetta.image.entity.Image" extends="BaseResultMap" >
+    <result column="pyramid_hash" property="pyramidHash" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, image_key, image_src, norm, dhash32_key, dhash128_key, update_time, create_time
+  </sql>
+  <sql id="Blob_Column_List" >
+    pyramid_hash
+  </sql>
+
+  <!-- 获取所有视频的个数 -->
+  <select id="selectCountAll" resultType="java.lang.Integer">
+    SELECT COUNT(*) AS count_image FROM image
+  </select>
+
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from image
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from image
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.rosetta.image.entity.Image" >
+    insert into image (id, image_key, image_src, 
+      norm, dhash32_key, dhash128_key, 
+      update_time, create_time, pyramid_hash
+      )
+    values (#{id,jdbcType=INTEGER}, #{imageKey,jdbcType=VARCHAR}, #{imageSrc,jdbcType=VARCHAR}, 
+      #{norm,jdbcType=DOUBLE}, #{dhash32Key,jdbcType=INTEGER}, #{dhash128Key,jdbcType=VARCHAR}, 
+      #{updateTime,jdbcType=BIGINT}, #{createTime,jdbcType=BIGINT}, #{pyramidHash,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.rosetta.image.entity.Image" >
+    insert into image
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="imageKey != null" >
+        image_key,
+      </if>
+      <if test="imageSrc != null" >
+        image_src,
+      </if>
+      <if test="norm != null" >
+        norm,
+      </if>
+      <if test="dhash32Key != null" >
+        dhash32_key,
+      </if>
+      <if test="dhash128Key != null" >
+        dhash128_key,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="pyramidHash != null" >
+        pyramid_hash,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="imageKey != null" >
+        #{imageKey,jdbcType=VARCHAR},
+      </if>
+      <if test="imageSrc != null" >
+        #{imageSrc,jdbcType=VARCHAR},
+      </if>
+      <if test="norm != null" >
+        #{norm,jdbcType=DOUBLE},
+      </if>
+      <if test="dhash32Key != null" >
+        #{dhash32Key,jdbcType=INTEGER},
+      </if>
+      <if test="dhash128Key != null" >
+        #{dhash128Key,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=BIGINT},
+      </if>
+      <if test="pyramidHash != null" >
+        #{pyramidHash,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.rosetta.image.entity.Image" >
+    update image
+    <set >
+      <if test="imageKey != null" >
+        image_key = #{imageKey,jdbcType=VARCHAR},
+      </if>
+      <if test="imageSrc != null" >
+        image_src = #{imageSrc,jdbcType=VARCHAR},
+      </if>
+      <if test="norm != null" >
+        norm = #{norm,jdbcType=DOUBLE},
+      </if>
+      <if test="dhash32Key != null" >
+        dhash32_key = #{dhash32Key,jdbcType=INTEGER},
+      </if>
+      <if test="dhash128Key != null" >
+        dhash128_key = #{dhash128Key,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=BIGINT},
+      </if>
+      <if test="pyramidHash != null" >
+        pyramid_hash = #{pyramidHash,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.rosetta.image.entity.Image" >
+    update image
+    set image_key = #{imageKey,jdbcType=VARCHAR},
+      image_src = #{imageSrc,jdbcType=VARCHAR},
+      norm = #{norm,jdbcType=DOUBLE},
+      dhash32_key = #{dhash32Key,jdbcType=INTEGER},
+      dhash128_key = #{dhash128Key,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=BIGINT},
+      create_time = #{createTime,jdbcType=BIGINT},
+      pyramid_hash = #{pyramidHash,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.rosetta.image.entity.Image" >
+    update image
+    set image_key = #{imageKey,jdbcType=VARCHAR},
+      image_src = #{imageSrc,jdbcType=VARCHAR},
+      norm = #{norm,jdbcType=DOUBLE},
+      dhash32_key = #{dhash32Key,jdbcType=INTEGER},
+      dhash128_key = #{dhash128Key,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=BIGINT},
+      create_time = #{createTime,jdbcType=BIGINT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
