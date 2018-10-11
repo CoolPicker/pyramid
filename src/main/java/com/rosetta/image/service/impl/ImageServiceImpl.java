@@ -7,11 +7,9 @@ import com.rosetta.image.entity.Image;
 import com.rosetta.image.mapper.HashMapper;
 import com.rosetta.image.mapper.ImageMapper;
 import com.rosetta.image.service.IImageService;
-import com.rosetta.image.util.CommonUtils;
 import com.rosetta.image.util.MD5Utils;
 import org.apache.commons.lang3.StringUtils;
 import org.opencv.core.Mat;
-import org.opencv.highgui.Highgui;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * @Author: nya

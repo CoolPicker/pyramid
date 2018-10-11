@@ -3,7 +3,7 @@ package com.rosetta.image.detect;
 import com.rosetta.image.util.CommonUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.opencv.core.*;
-import org.opencv.highgui.Highgui;
+import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -237,7 +237,7 @@ public class PyramidDetect {
             if (isRemote) {
                 resultMat = urlToMat(path);
             } else {
-                resultMat = Highgui.imread(path);
+                resultMat = Imgcodecs.imread(path);
             }
         } catch (Exception e) {
             log.error("pyramid detect pathToOriginalMat error : " , e);
@@ -286,7 +286,7 @@ public class PyramidDetect {
             encoded = new Mat(1,os.size(), CvType.CV_8U);
             encoded.put(0,0,os.toByteArray());
             //从内存中读，返回Mat形式
-            resultMat = Highgui.imdecode(encoded, -1);
+            resultMat = Imgcodecs.imdecode(encoded, -1);
         } catch (Exception e){
             log.error("remote url image to mat error : " , e);
         }finally {
